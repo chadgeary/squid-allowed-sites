@@ -16,11 +16,8 @@
         line: "{{ allowed_site }}"
       register: squid_allowed
 
-    - name: purge
-      shell: /bin/squidclient -m PURGE https://"{{ allowed_site }}"/
-
-    - name: squid service restarted on conf change
+    - name: squid service reload on conf change
       systemd:
         name: squid
-        state: restarted
+        state: reloaded
       when: squid_allowed.changed
