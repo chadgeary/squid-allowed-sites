@@ -1,0 +1,23 @@
+---
+- name: squid-allowed-sites
+  hosts: '{{ target }}'
+  vars:
+  become: True
+  become_user: root
+  tasks:
+    - name: allowed site
+      lineinfile:
+        path: /etc/squid/allowed_sites
+        state: present
+        owner: root
+        group: squid
+        mode: 440
+        backup: yes
+        line: "{{ allowed_site }}"
+      register: squid_allowed
+
+    - name: squid service restarted on conf change
+      systemd:
+        name: squid
+        state: restarted
+      when: squid_allowed.changed
